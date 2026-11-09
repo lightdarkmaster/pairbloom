@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import '../../core/utilities/date_helper.dart';
 import '../../models/couple_profile.dart';
 import '../../widgets/common_widgets.dart';
-import '../../widgets/module_placeholder_page.dart';
 import '../settings/settings_page.dart';
+import '../vault/vault_page.dart';
 import 'profile_controller.dart';
 import 'profile_form_page.dart';
 
@@ -42,7 +42,7 @@ class ProfilePage extends StatelessWidget {
                     _CoupleCard(profile: p, onEdit: () => _openForm(context, p)),
                   const SectionHeader('More'),
                   _tile(context, Icons.lock_rounded, 'Private Vault', 'Protected notes and letters',
-                      const ModulePlaceholderPage(title: 'Private Vault', icon: Icons.lock_rounded)),
+                      const VaultPage()),
                   const SizedBox(height: 10),
                   _tile(context, Icons.settings_rounded, 'Settings', 'Theme, accent color, currency',
                       const SettingsPage()),

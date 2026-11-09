@@ -5,6 +5,7 @@ import 'core/constants/app_constants.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_controller.dart';
 import 'features/shell/home_shell.dart';
+import 'features/vault/app_lock_gate.dart';
 
 class PairBloomApp extends StatelessWidget {
   const PairBloomApp({super.key});
@@ -18,6 +19,7 @@ class PairBloomApp extends StatelessWidget {
       themeMode: t.mode,
       theme: AppTheme.build(Brightness.light, t.accent),
       darkTheme: AppTheme.build(Brightness.dark, t.accent),
+      builder: (context, child) => AppLockGate(child: child ?? const SizedBox.shrink()),
       home: const HomeShell(),
     );
   }
