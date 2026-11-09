@@ -15,48 +15,30 @@ import 'repositories/settings_repository.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  try {
-    final db = DatabaseHelper.instance;
-    await db.database;
+  // Open (and migrate) the database before the first frame.
+  final db = DatabaseHelper.instance;
+  await db.database;
 
-    final settingsRepo = SettingsRepository(db);
-    final profileRepo = CoupleProfileRepository(db);
-    final memoryRepo = MemoryRepository(db);
-    final dateRepo = ImportantDateRepository(db);
+  final settingsRepo = SettingsRepository(db);
+  final profileRepo = CoupleProfileRepository(db);
+  final memoryRepo = MemoryRepository(db);
+  final dateRepo = ImportantDateRepository(db);
 
-    final theme = ThemeController(settingsRepo);
-    await theme.load();
+  final theme = ThemeController(settingsRepo);
+  await theme.load();
 
-    runApp(MultiProvider(
-      providers: [
-        Provider<DatabaseHelper>.value(value: db),
-        Provider<ImageService>(create: (_) => ImageService()),
-        Provider<SettingsRepository>.value(value: settingsRepo),
-        Provider<CoupleProfileRepository>.value(value: profileRepo),
-        Provider<MemoryRepository>.value(value: memoryRepo),
-        Provider<ImportantDateRepository>.value(value: dateRepo),
-        ChangeNotifierProvider<ThemeController>.value(value: theme),
-        ChangeNotifierProvider(
-            create: (_) => ProfileController(profileRepo)..load()),
-        ChangeNotifierProvider(
-            create: (_) =>
-                DashboardController(profileRepo, memoryRepo, dateRepo)..load()),
-      ],
-      child: const PairBloomApp(),
-    ));
-  } catch (e, st) {
-    debugPrint('STARTUP ERROR: $e\n$st');
-    runApp(MaterialApp(
-      home: Scaffold(
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: SingleChildScrollView(
-              child: Text('PairBloom failed to start:\n\n$e\n\n$st'),
-            ),
-          ),
-        ),
-      ),
-    ));
-  }
+  runApp(MultiProvider(
+    providers: [
+      Provider<DatabaseHelper>.value(value: db),
+      Provider<ImageService>(create: (_) => ImageService()),
+      Provider<SettingsRepository>.value(value: settingsRepo),
+      Provider<CoupleProfileRepository>.value(value: profileRepo),
+      Provider<MemoryRepository>.value(value: memoryRepo),
+      Provider<ImportantDateRepository>.value(value: dateRepo),
+      ChangeNotifierProvider<ThemeController>.value(value: theme),
+      ChangeNotifierProvider(create: (_) => ProfileController(profileRepo)..load()),
+      ChangeNotifierProvider(create: (_) => DashboardController(profileRepo, memoryRepo, dateRepo)..load()),
+    ],
+    child: const PairBloomApp(),
+  ));
 }
