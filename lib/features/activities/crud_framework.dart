@@ -536,7 +536,7 @@ class _CrudListPageState<T extends DbModel> extends State<CrudListPage<T>> {
           const SizedBox(height: 4),
           if (shown.isEmpty)
             SizedBox(
-              height: 260,
+              height: 320,
               child: EmptyState(
                 icon: widget.icon,
                 title: _query.isNotEmpty || _filter != 'All' ? 'Nothing found' : 'No ${widget.title.toLowerCase()} yet',
