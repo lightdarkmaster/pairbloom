@@ -6,6 +6,12 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/utilities/date_helper.dart';
 import '../../widgets/common_widgets.dart';
+import '../activities/bucket_list_page.dart';
+import '../activities/challenges_page.dart';
+import '../activities/date_planner_page.dart';
+import '../activities/expenses_page.dart';
+import '../activities/love_notes_page.dart';
+import '../activities/mood_page.dart';
 import '../profiles/profile_form_page.dart';
 import 'dashboard_controller.dart';
 
@@ -138,22 +144,23 @@ class _QuickAccess extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = <(IconData, String, int)>[
-      (Icons.photo_library_rounded, 'Memories', 1),
-      (Icons.calendar_month_rounded, 'Calendar', 2),
-      (Icons.mail_rounded, 'Love notes', 3),
-      (Icons.mood_rounded, 'Check-in', 3),
-      (Icons.payments_rounded, 'Expenses', 3),
-      (Icons.checklist_rounded, 'Bucket list', 3),
+    void open(Widget page) => Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+    final items = <(IconData, String, VoidCallback)>[
+      (Icons.mail_rounded, 'Love notes', () => open(const LoveNotesPage())),
+      (Icons.mood_rounded, 'Check-in', () => open(const MoodPage())),
+      (Icons.payments_rounded, 'Expenses', () => open(const ExpensesPage())),
+      (Icons.question_answer_rounded, 'Questions', () => open(const ChallengesPage())),
+      (Icons.event_available_rounded, 'Date plan', () => open(const DatePlannerPage())),
+      (Icons.checklist_rounded, 'Bucket list', () => open(const BucketListPage())),
     ];
     final cs = Theme.of(context).colorScheme;
     return Wrap(spacing: 10, runSpacing: 10, children: [
-      for (final (icon, label, tab) in items)
+      for (final (icon, label, onTap) in items)
         SizedBox(
           width: (MediaQuery.sizeOf(context).width - 32 - 20) / 3,
           child: AppCard(
             padding: const EdgeInsets.symmetric(vertical: 14),
-            onTap: () => onNavigate(tab),
+            onTap: onTap,
             child: Column(children: [
               Icon(icon, color: cs.primary),
               const SizedBox(height: 6),

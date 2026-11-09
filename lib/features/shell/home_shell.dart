@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../widgets/module_placeholder_page.dart';
 import '../activities/activities_page.dart';
 import '../dashboard/dashboard_page.dart';
+import '../memories/memories_page.dart';
 import '../profiles/profile_page.dart';
 
 /// Bottom navigation: Home, Memories, Calendar, Activities, Profile.
@@ -21,7 +22,7 @@ class _HomeShellState extends State<HomeShell> {
   Widget build(BuildContext context) {
     final pages = <Widget>[
       DashboardPage(onNavigate: _go),
-      const ModulePlaceholderPage(title: 'Memories', icon: Icons.photo_library_rounded),
+      const MemoriesPage(),
       const ModulePlaceholderPage(title: 'Calendar', icon: Icons.calendar_month_rounded),
       const ActivitiesPage(),
       const ProfilePage(),

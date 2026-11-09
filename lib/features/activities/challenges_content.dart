@@ -1,0 +1,106 @@
+/// Built-in offline question and challenge collections.
+class ChallengeContent {
+  static const dailyQuestions = 'Daily Questions';
+  static const starters = 'Conversation Starters';
+  static const romantic = 'Romantic Challenges';
+  static const knowEachOther = 'Get to Know Each Other';
+  static const weekly = 'Weekly Activities';
+  static const dateIdeas = 'Date Ideas';
+
+  static const Map<String, List<String>> all = {
+    dailyQuestions: [
+      'What was the best part of your day, and what made it good?',
+      'What is one small thing I did recently that made you smile?',
+      'What is something you are looking forward to this week?',
+      'What is one thing you would like us to do more of?',
+      'When did you feel closest to me this month?',
+      'What is a worry on your mind that I can help carry?',
+      'What song reminds you of us, and why?',
+      'What is something you are proud of yourself for lately?',
+      'If we had a free day with no plans, how would you spend it?',
+      'What is one thing I could do to make your week easier?',
+      'What is your favorite memory of us from the past year?',
+      'What is something new you would like to learn together?',
+      'How can I support you in a goal you are working on?',
+      'What made you feel loved today?',
+      'What is a tradition you would like us to start?',
+      'What is one thing you appreciate about how we handle disagreements?',
+      'What is a place that makes you feel calm?',
+      'What small luxury would make your day better?',
+    ],
+    starters: [
+      'If we could live anywhere for a year, where would it be?',
+      'What was your first impression of me?',
+      'What is a skill you wish you had?',
+      'Which meal would you want to eat every week?',
+      'What is the kindest thing a stranger has done for you?',
+      'What would your perfect weekend look like?',
+      'What is a movie you could watch over and over?',
+      'What would you do if you won a big prize tomorrow?',
+      'Which childhood memory still makes you laugh?',
+      'What is a dream you have not told many people?',
+      'What does home mean to you?',
+      'If our relationship were a book, what would the title be?',
+    ],
+    romantic: [
+      'Write three things you love about your partner and read them aloud.',
+      'Cook a meal together with no phones at the table.',
+      'Leave a sweet note somewhere your partner will find it today.',
+      'Plan a surprise 10-minute dance in the living room.',
+      'Give a 15-minute massage, no talking required.',
+      'Recreate your first date, or the closest version you can.',
+      'Look through old photos together and share what you remember.',
+      'Send a voice message telling your partner why you are grateful for them.',
+      'Watch the sunset or sunrise together.',
+      'Stargaze for 20 minutes and share one wish each.',
+      'Write a short letter to each other to open in one year.',
+      'Take turns choosing a compliment you have never said before.',
+    ],
+    knowEachOther: [
+      'What was your favorite subject in school and why?',
+      'What was your biggest childhood fear?',
+      'What is a small habit of yours you think is quirky?',
+      'What do you value most in a friend?',
+      'Which three words would you use to describe yourself?',
+      'What is something you have always wanted to try?',
+      'What was the best gift you ever received?',
+      'What is your favorite way to relax after a hard day?',
+      'What is a family tradition you cherish?',
+      'What accomplishment are you most proud of?',
+      'What does a perfect morning look like to you?',
+      'What is one thing most people do not know about you?',
+    ],
+    weekly: [
+      'Take a walk together somewhere you have never been.',
+      'Do a mini photo shoot of the two of you.',
+      'Cook a new recipe neither of you has tried.',
+      'Have a no-screens evening with music and conversation.',
+      'Tidy one room together, then reward yourselves with dessert.',
+      'Start a small shared playlist and add five songs each.',
+      'Plan next month together: dates, goals, and rest days.',
+      'Try a new cafe or street food stall.',
+      'Do a small act of kindness together for someone else.',
+      'Play a board game or card game, loser makes tea.',
+    ],
+    dateIdeas: [
+      'Picnic in a park with homemade snacks',
+      'Movie marathon night with blanket fort',
+      'Sunset walk followed by street food',
+      'Cook a three-course dinner at home',
+      'Visit a local museum or art exhibit',
+      'Take a day trip to a nearby town or beach',
+      'Karaoke night at home',
+      'Pottery or painting class together',
+      'Breakfast date at a new cafe',
+      'Game night with snacks and a scoreboard',
+      'Stargazing with hot chocolate',
+      'Bike ride to a scenic spot',
+      'Try a restaurant with a cuisine neither of you has had',
+      'DIY spa night at home',
+      'Plant something together: herbs, flowers, or a tiny garden',
+      'Write and open a time capsule',
+    ],
+  };
+
+  static String key(String category, int index) => '$category|$index';
+}

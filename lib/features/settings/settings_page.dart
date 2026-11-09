@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/theme_controller.dart';
 import '../../widgets/common_widgets.dart';
+import '../vault/vault_security_page.dart';
 
 /// Phase 1 settings: theme, accent colour, currency, About.
 /// Notifications, app lock, backup/restore and clear-data are added with their services.
@@ -61,6 +62,17 @@ class SettingsPage extends StatelessWidget {
             },
           ),
         ),
+        const SectionHeader('Security'),
+        AppCard(
+          padding: EdgeInsets.zero,
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const VaultSecurityPage())),
+          child: ListTile(
+            leading: Icon(Icons.lock_rounded, color: cs.primary),
+            title: const Text('PIN, biometrics & app lock'),
+            subtitle: const Text('Protect the app and your private vault'),
+            trailing: const Icon(Icons.chevron_right_rounded),
+          ),
+        ),
         const SectionHeader('About'),
         AppCard(
           child: Column(children: [
@@ -72,6 +84,9 @@ class SettingsPage extends StatelessWidget {
             Text('Version ${AppConstants.version}', style: TextStyle(color: cs.onSurfaceVariant)),
             const SizedBox(height: 4),
             Text('100% offline. Your data never leaves this device.',
+                textAlign: TextAlign.center, style: TextStyle(color: cs.onSurfaceVariant)),
+            const SizedBox(height: 4),
+            Text('Developed By: Christian Barbosa',
                 textAlign: TextAlign.center, style: TextStyle(color: cs.onSurfaceVariant)),
           ]),
         ),

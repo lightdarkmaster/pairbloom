@@ -7,6 +7,8 @@ import 'core/services/image_service.dart';
 import 'core/theme/theme_controller.dart';
 import 'features/dashboard/dashboard_controller.dart';
 import 'features/profiles/profile_controller.dart';
+import 'features/vault/lock_controller.dart';
+import 'repositories/repos.dart';
 import 'repositories/couple_profile_repository.dart';
 import 'repositories/important_date_repository.dart';
 import 'repositories/memory_repository.dart';
@@ -27,6 +29,9 @@ Future<void> main() async {
     final theme = ThemeController(settingsRepo);
     await theme.load();
 
+    final lock = LockController(Repos.vault);
+    await lock.load();
+
     runApp(MultiProvider(
       providers: [
         Provider<DatabaseHelper>.value(value: db),
@@ -36,11 +41,10 @@ Future<void> main() async {
         Provider<MemoryRepository>.value(value: memoryRepo),
         Provider<ImportantDateRepository>.value(value: dateRepo),
         ChangeNotifierProvider<ThemeController>.value(value: theme),
+        ChangeNotifierProvider<LockController>.value(value: lock),
+        ChangeNotifierProvider(create: (_) => ProfileController(profileRepo)..load()),
         ChangeNotifierProvider(
-            create: (_) => ProfileController(profileRepo)..load()),
-        ChangeNotifierProvider(
-            create: (_) =>
-                DashboardController(profileRepo, memoryRepo, dateRepo)..load()),
+            create: (_) => DashboardController(profileRepo, memoryRepo, dateRepo)..load()),
       ],
       child: const PairBloomApp(),
     ));
@@ -51,9 +55,7 @@ Future<void> main() async {
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24),
-            child: SingleChildScrollView(
-              child: Text('PairBloom failed to start:\n\n$e\n\n$st'),
-            ),
+            child: SingleChildScrollView(child: Text('PairBloom failed to start:\n\n$e\n\n$st')),
           ),
         ),
       ),

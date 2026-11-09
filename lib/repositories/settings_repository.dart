@@ -9,8 +9,7 @@ class SettingsRepository {
 
   Future<String?> get(String key) async {
     final d = await db.database;
-    final rows = await d.rawQuery(
-        'SELECT value FROM app_settings WHERE key = ? LIMIT 1', [key]);
+    final rows = await d.rawQuery('SELECT value FROM app_settings WHERE key = ? LIMIT 1', [key]);
     return rows.isEmpty ? null : rows.first['value']?.toString();
   }
 
@@ -18,11 +17,7 @@ class SettingsRepository {
     final d = await db.database;
     await d.insert(
       'app_settings',
-      {
-        'key': key,
-        'value': value,
-        'updated_at': DateTime.now().toIso8601String()
-      },
+      {'key': key, 'value': value, 'updated_at': DateTime.now().toIso8601String()},
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }

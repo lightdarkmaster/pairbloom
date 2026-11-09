@@ -45,23 +45,30 @@ class EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          CircleAvatar(
-              radius: 40,
-              backgroundColor: cs.primaryContainer,
-              child: Icon(icon, size: 40, color: cs.primary)),
-          const SizedBox(height: 16),
-          Text(title, style: Theme.of(context).textTheme.titleLarge, textAlign: TextAlign.center),
-          const SizedBox(height: 6),
-          Text(message, textAlign: TextAlign.center, style: TextStyle(color: cs.onSurfaceVariant)),
-          if (actionLabel != null) ...[
-            const SizedBox(height: 20),
-            FilledButton(onPressed: onAction, child: Text(actionLabel!)),
-          ],
-        ]),
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.hasBoundedHeight ? constraints.maxHeight : 0),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                CircleAvatar(
+                    radius: 36,
+                    backgroundColor: cs.primaryContainer,
+                    child: Icon(icon, size: 36, color: cs.primary)),
+                const SizedBox(height: 14),
+                Text(title, style: Theme.of(context).textTheme.titleLarge, textAlign: TextAlign.center),
+                const SizedBox(height: 6),
+                Text(message, textAlign: TextAlign.center, style: TextStyle(color: cs.onSurfaceVariant)),
+                if (actionLabel != null) ...[
+                  const SizedBox(height: 18),
+                  FilledButton(onPressed: onAction, child: Text(actionLabel!)),
+                ],
+              ]),
+            ),
+          ),
+        ),
       ),
     );
   }
