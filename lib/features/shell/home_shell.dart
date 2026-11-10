@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../widgets/module_placeholder_page.dart';
 import '../activities/activities_page.dart';
+import '../calendar/calendar_page.dart';
 import '../dashboard/dashboard_page.dart';
 import '../memories/memories_page.dart';
 import '../profiles/profile_page.dart';
@@ -23,7 +23,7 @@ class _HomeShellState extends State<HomeShell> {
     final pages = <Widget>[
       DashboardPage(onNavigate: _go),
       const MemoriesPage(),
-      const ModulePlaceholderPage(title: 'Calendar', icon: Icons.calendar_month_rounded),
+      const CalendarPage(),
       const ActivitiesPage(),
       const ProfilePage(),
     ];

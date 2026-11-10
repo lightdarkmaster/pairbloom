@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/services/reminder_scheduler.dart';
 import '../../models/activity_models.dart';
 import '../../repositories/repos.dart';
 import '../../widgets/common_widgets.dart';
@@ -100,6 +101,7 @@ class _ChallengesPageState extends State<ChallengesPage> {
     final when = DateTime(d.year, d.month, d.day, 19);
     try {
       await Repos.datePlans.insert(DatePlan(coupleId: cid, title: idea, scheduledAt: when));
+      ReminderScheduler.rescheduleAll();
       if (mounted) showAppSnack(context, 'Added to Date Planner for ${DateFormat('EEE, MMM d').format(when)}, 7:00 PM');
     } catch (e) {
       if (mounted) showAppSnack(context, e.toString(), error: true);
