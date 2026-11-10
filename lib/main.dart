@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'app.dart';
 import 'core/database/database_helper.dart';
 import 'core/services/image_service.dart';
+import 'core/services/notification_service.dart';
+import 'core/services/reminder_scheduler.dart';
 import 'core/theme/theme_controller.dart';
 import 'features/dashboard/dashboard_controller.dart';
 import 'features/profiles/profile_controller.dart';
@@ -31,6 +35,10 @@ Future<void> main() async {
 
     final lock = LockController(Repos.vault);
     await lock.load();
+
+    // Notifications never block startup; reminders are rebuilt in the background.
+    await NotificationService.instance.init();
+    unawaited(ReminderScheduler.rescheduleAll());
 
     runApp(MultiProvider(
       providers: [

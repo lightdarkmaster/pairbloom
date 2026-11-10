@@ -359,6 +359,7 @@ class CrudListPage<T extends DbModel> extends StatefulWidget {
     this.header,
     this.filtersBuilder,
     this.onDeleted,
+    this.onChanged,
     this.emptyMessage = 'Tap + to add your first one.',
   });
 
@@ -373,6 +374,9 @@ class CrudListPage<T extends DbModel> extends StatefulWidget {
   final Widget Function(BuildContext context, List<T> all)? header;
   final Map<String, bool Function(T item)> Function(BuildContext context)? filtersBuilder;
   final Future<void> Function(T item)? onDeleted;
+
+  /// Called after any successful add, edit, delete or quick-save.
+  final VoidCallback? onChanged;
 
   @override
   State<CrudListPage<T>> createState() => _CrudListPageState<T>();
@@ -446,6 +450,7 @@ class _CrudListPageState<T extends DbModel> extends State<CrudListPage<T>> {
     );
     if (ok == true) {
       await _load();
+      widget.onChanged?.call();
       if (mounted) showAppSnack(context, existing == null ? '${_cap(widget.singular)} added' : '${_cap(widget.singular)} updated');
     }
   }
@@ -460,6 +465,7 @@ class _CrudListPageState<T extends DbModel> extends State<CrudListPage<T>> {
       await widget.repo.delete(item.id!);
       await widget.onDeleted?.call(item);
       await _load();
+      widget.onChanged?.call();
       if (mounted) showAppSnack(context, '${_cap(widget.singular)} deleted');
     } catch (e) {
       if (mounted) showAppSnack(context, e.toString(), error: true);
@@ -470,6 +476,7 @@ class _CrudListPageState<T extends DbModel> extends State<CrudListPage<T>> {
     try {
       await widget.repo.update(item);
       await _load();
+      widget.onChanged?.call();
     } catch (e) {
       if (mounted) showAppSnack(context, e.toString(), error: true);
     }

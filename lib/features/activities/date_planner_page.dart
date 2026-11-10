@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/theme/theme_controller.dart';
 import '../../core/utilities/format_helper.dart';
+import '../../core/services/reminder_scheduler.dart';
 import '../../models/activity_models.dart';
 import '../../repositories/repos.dart';
 import '../../widgets/common_widgets.dart';
@@ -22,6 +23,7 @@ class DatePlannerPage extends StatelessWidget {
       icon: Icons.event_available_rounded,
       singular: 'date',
       repo: Repos.datePlans,
+      onChanged: ReminderScheduler.rescheduleAll,
       orderBy:
           "CASE status WHEN 'Planned' THEN 0 ELSE 1 END, CASE status WHEN 'Planned' THEN scheduled_at END ASC, scheduled_at DESC",
       emptyMessage: 'Plan your next date together.',

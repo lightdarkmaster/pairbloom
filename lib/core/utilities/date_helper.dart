@@ -34,4 +34,25 @@ class DateHelper {
     if (c.isBefore(t)) c = inYear(original, t.year + 1);
     return c;
   }
+
+  static int daysInMonth(int year, int month) => DateTime(year, month + 1, 0).day;
+
+  /// Same day-of-month in the given month, clamped to the month length.
+  static DateTime inMonth(DateTime original, int year, int month) {
+    final last = daysInMonth(year, month);
+    return DateTime(year, month, original.day > last ? last : original.day);
+  }
+
+  /// Next monthly occurrence on/after [today] (never before [original]).
+  static DateTime nextMonthly(DateTime original, DateTime today) {
+    final o = dateOnly(original);
+    final t = dateOnly(today);
+    final from = t.isBefore(o) ? o : t;
+    var c = inMonth(o, from.year, from.month);
+    if (c.isBefore(from)) {
+      final nm = DateTime(from.year, from.month + 1);
+      c = inMonth(o, nm.year, nm.month);
+    }
+    return c;
+  }
 }

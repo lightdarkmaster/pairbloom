@@ -25,21 +25,26 @@ class ImportantDate implements DbModel {
   final int reminderMinutesBefore;
   final String? notes;
 
+  /// Repeating Monthsary events repeat every month; other repeating events yearly.
+  bool get isMonthly => isRecurringAnnual && eventType == 'Monthsary';
+
   /// Next date this event happens (today counts), or null if it already passed
   /// and does not recur.
   DateTime? nextOccurrence(DateTime today) {
     final t = DateHelper.dateOnly(today);
-    if (isRecurringAnnual) return DateHelper.nextOccurrence(eventDate, t);
-    final d = DateHelper.dateOnly(eventDate);
-    return d.isBefore(t) ? null : d;
+    final o = DateHelper.dateOnly(eventDate);
+    if (isMonthly) return DateHelper.nextMonthly(o, t);
+    if (isRecurringAnnual) return DateHelper.nextOccurrence(o, t.isBefore(o) ? o : t);
+    return o.isBefore(t) ? null : o;
   }
 
   bool occursOn(DateTime day) {
     final d = DateHelper.dateOnly(day);
-    if (isRecurringAnnual) {
-      return DateHelper.dateOnly(DateHelper.inYear(eventDate, d.year)) == d;
-    }
-    return DateHelper.dateOnly(eventDate) == d;
+    final o = DateHelper.dateOnly(eventDate);
+    if (d.isBefore(o)) return false;
+    if (isMonthly) return DateHelper.inMonth(o, d.year, d.month) == d;
+    if (isRecurringAnnual) return DateHelper.inYear(o, d.year) == d;
+    return o == d;
   }
 
   factory ImportantDate.fromMap(Map<String, Object?> m) => ImportantDate(
