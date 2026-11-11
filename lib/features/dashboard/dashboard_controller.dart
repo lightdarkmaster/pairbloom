@@ -8,6 +8,8 @@ import '../../models/memory.dart';
 import '../../repositories/couple_profile_repository.dart';
 import '../../repositories/important_date_repository.dart';
 import '../../repositories/memory_repository.dart';
+import '../../repositories/repos.dart';
+import '../../core/utilities/geo_helper.dart';
 
 class Milestone {
   Milestone(this.label, this.date, this.achieved);
@@ -29,6 +31,8 @@ class DashboardController extends ChangeNotifier {
   List<Memory> recentMemories = [];
   List<ImportantDate> todaysReminders = [];
   List<UpcomingEvent> upcoming = [];
+  double? distanceKm; // straight-line distance between the latest locations
+  bool useMiles = false;
 
   static const _milestoneDays = [100, 200, 300, 365, 500, 730, 1000, 1500, 1825, 2000, 3000, 3650];
 
@@ -38,6 +42,16 @@ class DashboardController extends ChangeNotifier {
     notifyListeners();
     try {
       profile = await _profiles.getActive();
+      distanceKm = null;
+      final cid = profile?.id;
+      if (cid != null) {
+        final a = await Repos.locations.latest(cid, 1);
+        final b = await Repos.locations.latest(cid, 2);
+        if (a != null && b != null) {
+          distanceKm = GeoHelper.haversineKm(a.latitude, a.longitude, b.latitude, b.longitude);
+        }
+        useMiles = (await Repos.settings.get('distance_unit')) == 'mi';
+      }
       final results = await Future.wait([
         _memories.recent(limit: 6),
         _dates.forDay(DateTime.now()),

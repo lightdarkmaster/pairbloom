@@ -1,6 +1,7 @@
 import '../core/database/database_helper.dart';
 import 'activity_repositories.dart';
 import 'important_date_repository.dart';
+import 'location_repository.dart';
 import 'memory_repository.dart';
 import 'private_note_repository.dart';
 import '../core/services/vault_service.dart';
@@ -11,6 +12,7 @@ class Repos {
   static final _db = DatabaseHelper.instance;
   static final settings = SettingsRepository(_db);
   static final memories = MemoryRepository(_db);
+  static final locations = LocationRepository(_db);
   static final importantDates = ImportantDateRepository(_db);
   static final vault = VaultService();
   static final privateNotes = PrivateNoteRepository(_db, vault);

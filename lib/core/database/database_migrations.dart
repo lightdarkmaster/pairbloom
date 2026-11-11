@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 /// To change the schema later: bump [currentVersion] and add the SQL for the
 /// new version to [_upgrades]. Existing users keep their data.
 class DatabaseMigrations {
-  static const currentVersion = 1;
+  static const currentVersion = 2;
 
   /// Every table, in dependency order (parents first). Used for clearing data.
   static const tableNames = <String>[
@@ -22,6 +22,7 @@ class DatabaseMigrations {
     'relationship_goals',
     'couple_challenges',
     'private_notes',
+    'locations',
     'app_settings',
   ];
 
@@ -29,6 +30,12 @@ class DatabaseMigrations {
     final batch = db.batch();
     for (final sql in _v1) {
       batch.execute(sql);
+    }
+    // Fresh installs also get every later migration.
+    for (var v = 2; v <= version; v++) {
+      for (final sql in _upgrades[v] ?? const <String>[]) {
+        batch.execute(sql);
+      }
     }
     await batch.commit(noResult: true);
   }
@@ -42,7 +49,24 @@ class DatabaseMigrations {
   }
 
   static const Map<int, List<String>> _upgrades = {
-    // 2: ['ALTER TABLE memories ADD COLUMN mood TEXT'],
+    2: [
+      '''CREATE TABLE locations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        couple_id INTEGER NOT NULL REFERENCES couple_profiles(id) ON DELETE CASCADE,
+        owner INTEGER NOT NULL DEFAULT 0 CHECK(owner IN (0,1,2)),
+        label TEXT,
+        latitude REAL NOT NULL CHECK(latitude BETWEEN -90 AND 90),
+        longitude REAL NOT NULL CHECK(longitude BETWEEN -180 AND 180),
+        accuracy_m REAL,
+        source TEXT NOT NULL DEFAULT 'manual' CHECK(source IN ('gps','code','manual')),
+        is_place INTEGER NOT NULL DEFAULT 0 CHECK(is_place IN (0,1)),
+        recorded_at TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )''',
+      'CREATE INDEX idx_locations_owner ON locations(owner, recorded_at DESC)',
+      'CREATE INDEX idx_locations_place ON locations(is_place)',
+    ],
   };
 
   // Timestamps are ISO-8601 TEXT; date-only columns are 'yyyy-MM-dd' TEXT.

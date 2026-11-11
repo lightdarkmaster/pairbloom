@@ -6,12 +6,14 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/utilities/date_helper.dart';
 import '../../widgets/common_widgets.dart';
+import '../../core/utilities/geo_helper.dart';
 import '../activities/bucket_list_page.dart';
 import '../activities/challenges_page.dart';
 import '../activities/date_planner_page.dart';
 import '../activities/expenses_page.dart';
 import '../activities/love_notes_page.dart';
 import '../activities/mood_page.dart';
+import '../location/distance_page.dart';
 import '../profiles/profile_form_page.dart';
 import 'dashboard_controller.dart';
 
@@ -46,6 +48,7 @@ class DashboardPage extends StatelessWidget {
                         _HeaderCard(c: c),
                         const SizedBox(height: 12),
                         _AnniversaryCard(c: c),
+                        if (c.distanceKm != null) ...[const SizedBox(height: 12), _DistanceCard(c: c)],
                         const SectionHeader('Quick access'),
                         _QuickAccess(onNavigate: onNavigate),
                         const SectionHeader("Today's reminders"),
@@ -132,6 +135,31 @@ class _AnniversaryCard extends StatelessWidget {
           ]),
         ),
         Text(today ? 'Today! 🎉' : days == 1 ? 'Tomorrow' : 'in $days days',
+            style: TextStyle(fontWeight: FontWeight.w800, color: cs.primary, fontSize: 16)),
+      ]),
+    );
+  }
+}
+
+class _DistanceCard extends StatelessWidget {
+  const _DistanceCard({required this.c});
+  final DashboardController c;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return AppCard(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DistancePage())),
+      child: Row(children: [
+        CircleAvatar(backgroundColor: cs.primaryContainer, child: Icon(Icons.social_distance_rounded, color: cs.primary)),
+        const SizedBox(width: 14),
+        const Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('Distance apart', style: TextStyle(fontWeight: FontWeight.w800)),
+            Text('Tap for travel estimates', style: TextStyle(fontSize: 12)),
+          ]),
+        ),
+        Text(GeoHelper.formatDistance(c.distanceKm!, c.useMiles),
             style: TextStyle(fontWeight: FontWeight.w800, color: cs.primary, fontSize: 16)),
       ]),
     );
