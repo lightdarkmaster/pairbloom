@@ -5,7 +5,24 @@ import 'package:sqflite/sqflite.dart';
 /// To change the schema later: bump [currentVersion] and add the SQL for the
 /// new version to [_upgrades]. Existing users keep their data.
 class DatabaseMigrations {
-  static const currentVersion = 2;
+  static const currentVersion = 3;
+
+  /// Tables synced to the cloud, parents first. Each has a `sync_id` column
+  /// (a UUID that is identical on every phone) so records can be matched.
+  static const syncTables = <String>[
+    'couple_profiles',
+    'memories',
+    'love_notes',
+    'important_dates',
+    'date_plans',
+    'bucket_list',
+    'mood_entries',
+    'expenses',
+    'gift_wishlist',
+    'relationship_goals',
+    'couple_challenges',
+    'locations',
+  ];
 
   /// Every table, in dependency order (parents first). Used for clearing data.
   static const tableNames = <String>[
@@ -23,6 +40,7 @@ class DatabaseMigrations {
     'couple_challenges',
     'private_notes',
     'locations',
+    'sync_tombstones',
     'app_settings',
   ];
 
@@ -48,7 +66,7 @@ class DatabaseMigrations {
     }
   }
 
-  static const Map<int, List<String>> _upgrades = {
+  static final Map<int, List<String>> _upgrades = {
     2: [
       '''CREATE TABLE locations (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -66,6 +84,17 @@ class DatabaseMigrations {
       )''',
       'CREATE INDEX idx_locations_owner ON locations(owner, recorded_at DESC)',
       'CREATE INDEX idx_locations_place ON locations(is_place)',
+    ],
+    3: [
+      for (final t in syncTables) 'ALTER TABLE $t ADD COLUMN sync_id TEXT',
+      for (final t in syncTables) 'CREATE UNIQUE INDEX idx_${t}_sync_id ON $t(sync_id)',
+      '''CREATE TABLE sync_tombstones (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        table_name TEXT NOT NULL,
+        sync_id TEXT NOT NULL,
+        deleted_at TEXT NOT NULL,
+        UNIQUE(table_name, sync_id)
+      )''',
     ],
   };
 

@@ -16,6 +16,8 @@ class ImageService {
     return dir;
   }
 
+  Future<String> imagesDirPath() async => (await _dir()).path;
+
   Future<String> _store(XFile picked) async {
     final dir = await _dir();
     final ext = p.extension(picked.path).isEmpty ? '.jpg' : p.extension(picked.path);

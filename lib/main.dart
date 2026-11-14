@@ -8,6 +8,7 @@ import 'core/database/database_helper.dart';
 import 'core/services/image_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/reminder_scheduler.dart';
+import 'core/services/sync_service.dart';
 import 'core/theme/theme_controller.dart';
 import 'features/dashboard/dashboard_controller.dart';
 import 'features/profiles/profile_controller.dart';
@@ -39,6 +40,10 @@ Future<void> main() async {
     // Notifications never block startup; reminders are rebuilt in the background.
     await NotificationService.instance.init();
     unawaited(ReminderScheduler.rescheduleAll());
+
+    // Optional cloud sync: only active if the user turned it on.
+    db.onDataChanged = SyncService.instance.scheduleSync;
+    unawaited(SyncService.instance.onAppStart());
 
     runApp(MultiProvider(
       providers: [

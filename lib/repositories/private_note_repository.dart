@@ -19,8 +19,8 @@ class PrivateNoteRepository {
   }
 
   Future<PrivateNote> _decode(Map<String, Object?> r) async {
-    final created = DateTime.parse(r['created_at'] as String);
-    final updated = DateTime.parse(r['updated_at'] as String);
+    final created = DateTime.parse(r['created_at'] as String).toLocal();
+    final updated = DateTime.parse(r['updated_at'] as String).toLocal();
     try {
       final json = jsonDecode(await vault.decrypt(r['encrypted_content'] as String, r['iv'] as String))
           as Map<String, dynamic>;

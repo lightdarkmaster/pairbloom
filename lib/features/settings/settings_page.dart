@@ -5,6 +5,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/theme/theme_controller.dart';
 import '../../widgets/common_widgets.dart';
 import '../vault/vault_security_page.dart';
+import '../sync/sync_page.dart';
 import 'notification_settings_card.dart';
 
 /// Phase 1 settings: theme, accent colour, currency, About.
@@ -65,6 +66,17 @@ class SettingsPage extends StatelessWidget {
         ),
         const SectionHeader('Notifications'),
         const NotificationSettingsCard(),
+        const SectionHeader('Cloud sync (optional)'),
+        AppCard(
+          padding: EdgeInsets.zero,
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SyncPage())),
+          child: ListTile(
+            leading: Icon(Icons.cloud_upload_rounded, color: cs.primary),
+            title: const Text('Sync with Firebase'),
+            subtitle: const Text('Back up and share data between your phones'),
+            trailing: const Icon(Icons.chevron_right_rounded),
+          ),
+        ),
         const SectionHeader('Security'),
         AppCard(
           padding: EdgeInsets.zero,

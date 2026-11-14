@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
 
+import '../utilities/id_helper.dart';
 import 'database_migrations.dart';
 
 /// Wraps low-level sqflite failures so the UI can show friendly messages.
@@ -22,6 +23,11 @@ class DatabaseHelper {
 
   static const dbFileName = 'pairbloom.db';
   Database? _db;
+
+  /// Called after any write made through this helper (used to schedule cloud sync).
+  void Function()? onDataChanged;
+
+  static String _nowUtc() => DateTime.now().toUtc().toIso8601String();
 
   Future<String> get _dbPath async =>
       p.join(await getDatabasesPath(), dbFileName);
@@ -65,12 +71,17 @@ class DatabaseHelper {
   Future<int> insert(String table, Map<String, Object?> values,
       {DatabaseExecutor? txn}) {
     return _guard('insert into $table', () async {
-      final now = DateTime.now().toIso8601String();
+      final now = _nowUtc();
       final data = Map<String, Object?>.from(values)
         ..remove('id')
         ..['created_at'] = now
         ..['updated_at'] = now;
-      return (txn ?? await database).insert(table, data);
+      if (DatabaseMigrations.syncTables.contains(table)) {
+        data['sync_id'] = IdHelper.newSyncId();
+      }
+      final id = await (txn ?? await database).insert(table, data);
+      onDataChanged?.call();
+      return id;
     });
   }
 
@@ -102,16 +113,30 @@ class DatabaseHelper {
       final data = Map<String, Object?>.from(values)
         ..remove('id')
         ..remove('created_at')
-        ..['updated_at'] = DateTime.now().toIso8601String();
-      return (txn ?? await database)
+        ..['updated_at'] = _nowUtc();
+      final n = await (txn ?? await database)
           .update(table, data, where: 'id = ?', whereArgs: [id]);
+      onDataChanged?.call();
+      return n;
     });
   }
 
   Future<int> delete(String table, int id, {DatabaseExecutor? txn}) {
     return _guard('delete from $table', () async {
-      return (txn ?? await database)
-          .delete(table, where: 'id = ?', whereArgs: [id]);
+      final ex = txn ?? await database;
+      // Remember deletions of synced records so other phones can delete them too.
+      if (DatabaseMigrations.syncTables.contains(table)) {
+        final rows = await ex.query(table, columns: ['sync_id'], where: 'id = ?', whereArgs: [id], limit: 1);
+        final sid = rows.isEmpty ? null : rows.first['sync_id'] as String?;
+        if (sid != null) {
+          await ex.insert(
+              'sync_tombstones', {'table_name': table, 'sync_id': sid, 'deleted_at': _nowUtc()},
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+      final n = await ex.delete(table, where: 'id = ?', whereArgs: [id]);
+      onDataChanged?.call();
+      return n;
     });
   }
 
